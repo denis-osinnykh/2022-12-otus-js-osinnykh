@@ -2,6 +2,7 @@ let fn1 = () => {
     console.log('fn1')
     return Promise.resolve(1)
 }
+
 let fn2 = () => new Promise(resolve => {
     setTimeout(() => {
         console.log('fn2')
@@ -9,26 +10,18 @@ let fn2 = () => new Promise(resolve => {
     }, 1000)
 })
 
-
 function promiseReduce(asyncFunctions, reduce, initialValue) {
-    let result = 0
-    let i = 0
-    return new Promise((resolve) => {
-        asyncFunctions.forEach(async function(func) {
-            result = await getResult(func, reduce, initialValue, result)
+    return new Promise(resolve => {
+        let result = 0;
+        (async () => {
+            for (let i = 0; i < asyncFunctions.length; i++) {
+                result = await reduce(await asyncFunctions[i](), result == 0 ? initialValue : result)
 
-            if (i === asyncFunctions.length-1)
-                resolve(result)
-            else
-                i++
-        })
+                if (i === asyncFunctions.length - 1)
+                    resolve(result)
+            }
+        })()
     })
-}
-
-async function getResult(func, reduce, value, result) {
-    result += reduce(await func(), value)
-
-    return result
 }
 
 promiseReduce(
