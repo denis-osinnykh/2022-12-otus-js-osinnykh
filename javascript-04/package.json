@@ -1,0 +1,7 @@
+{
+  "name": "azaza",
+  "private": true,
+  "scripts": {
+    "tree": "node ./tree.mjs"
+  }
+}
